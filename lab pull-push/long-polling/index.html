@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Landing page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <h1 class="text-center text-danger">Long Polling</h1>
+    <div id="content" class="border p-4 fs-3"></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script>
+const divcontent = document.getElementById('content');
+
+function dopolling(lastmodified) {
+    $.ajax({
+        url: "http://localhost:3000/mycv",
+        method: "GET",
+        data: {
+            lastModified: lastmodified
+        },
+        success: function(data) {
+            const data_received = data;
+            divcontent.innerHTML += `<pre>${data_received.data}</pre>`;
+            divcontent.innerHTML += '<hr style="color: red">';
+            dopolling(data_received.server_time); 
+        },
+        error: function() {
+            divcontent.innerHTML += `<h1 style="color: red">error getting data</h1>`;
+            setTimeout(() => dopolling(lastmodified), 5000); 
+        }
+    });
+}
+
+
+dopolling(0);
+</script>
+</body>
+</html>
